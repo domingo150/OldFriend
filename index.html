@@ -7,47 +7,49 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body, html { height: 100%; width: 100%; background: #121214; color: #fff; -webkit-user-select: none; overflow-x: hidden; }
-        .screen { display: none; min-height: 100vh; width: 100%; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .screen { display: none; min-height: 100%; width: 100%; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         .active { display: flex !important; }
         
         .card { background: #202024; padding: 25px; border-radius: 14px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4); margin-bottom: 15px; }
-        input, textarea { width: 100%; padding: 14px; margin: 12px 0; border: 2px solid #323238; background: #121214; color: #fff; border-radius: 8px; font-size: 16px; }
-        input { text-align: center; }
-        textarea { resize: none; height: 100px; }
+        h2 { color: #ffd166; margin-bottom: 10px; }
+        p { color: #c4c4cc; line-height: 1.5; }
+        
+        input, textarea { width: 100%; padding: 14px; margin: 15px 0; border: 2px solid #323238; background: #121214; color: #fff; border-radius: 8px; font-size: 16px; outline: none; }
+        input:focus, textarea:focus { border-color: #00b0ff; }
+        textarea { resize: none; height: 100px; text-align: left; }
         
         button { width: 100%; padding: 14px; background: #00b0ff; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 8px; }
         button:hover { background: #0091ea; }
-        button:disabled { background: #4c4c52; color: #8e8e93; cursor: not-allowed; }
+        button:disabled { background: #4c4c52; cursor: not-allowed; color: #8e8e93; }
 
-        /* 題目橫幅 */
-        .prompt-box { background: linear-gradient(135deg, #2b2b36 0%, #1e1e24 100%); border-left: 5px solid #ffd166; padding: 20px; border-radius: 10px; width: 100%; max-width: 500px; margin-bottom: 20px; text-align: left; }
-        .prompt-tag { font-size: 13px; color: #ffd166; font-weight: bold; margin-bottom: 6px; display: block; }
-        .prompt-text { font-size: 20px; font-weight: bold; line-height: 1.4; }
-        .highlight-name { color: #ff5722; text-decoration: underline; padding: 0 4px; }
+        /* 題目展示框 */
+        .prompt-box { background: linear-gradient(135deg, #2b2d42, #1d1e2c); border-left: 5px solid #ffd166; padding: 20px; border-radius: 10px; margin: 15px 0; font-size: 20px; font-weight: bold; line-height: 1.5; text-align: left; }
+        .highlight-name { color: #ff4757; background: rgba(255, 71, 87, 0.15); padding: 2px 8px; border-radius: 6px; }
 
         /* 投票選項卡片 */
-        .vote-option { background: #29292e; border: 2px solid #3a3a40; padding: 16px; border-radius: 10px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; transition: 0.2s; font-size: 17px; line-height: 1.4; }
-        .vote-option:hover { border-color: #00b0ff; }
-        .vote-option.selected { border-color: #06d6a0; background: rgba(6, 214, 160, 0.15); }
-        .vote-option.disabled { opacity: 0.6; cursor: not-allowed; }
+        .vote-card { background: #2a2a30; border: 2px solid #3a3a42; padding: 16px; border-radius: 10px; margin: 10px 0; text-align: left; cursor: pointer; transition: 0.2s; position: relative; }
+        .vote-card:hover { border-color: #06d6a0; transform: translateY(-2px); }
+        .vote-card.selected { border-color: #06d6a0; background: rgba(6, 214, 160, 0.15); }
+        .vote-card.my-own { border-color: #555; opacity: 0.6; cursor: not-allowed; }
+        .vote-text { font-size: 18px; font-weight: 500; color: #fff; word-break: break-word; }
+        .vote-author { font-size: 13px; color: #ffd166; margin-top: 8px; font-weight: bold; }
 
-        /* 揭曉與排行榜 */
-        .reveal-item { background: #29292e; padding: 15px; border-radius: 10px; margin-bottom: 12px; width: 100%; text-align: left; border-left: 4px solid #00b0ff; }
-        .reveal-header { display: flex; justify-content: space-between; font-size: 14px; color: #a4a4a8; margin-bottom: 6px; }
-        .reveal-author { color: #ffd166; font-weight: bold; }
-        .reveal-votes { color: #06d6a0; font-weight: bold; }
-        .reveal-ans { font-size: 17px; color: #fff; }
-
+        /* 排行榜 */
+        .rank-list { width: 100%; max-width: 480px; background: #202024; border-radius: 12px; padding: 15px; max-height: 50vh; overflow-y: auto; margin: 15px 0; }
         .rank-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #323238; font-size: 17px; }
-        .rank-item:first-child { color: #ffd166; font-weight: bold; }
+        .rank-item:first-child { color: #ffd166; font-weight: bold; font-size: 19px; }
 
-        .host-panel { width: 100%; max-width: 480px; background: rgba(255, 87, 34, 0.1); border: 1px dashed #ff5722; padding: 15px; border-radius: 10px; margin-top: 15px; }
-        .host-title { font-size: 13px; color: #ff5722; font-weight: bold; margin-bottom: 8px; text-align: center; }
+        /* 關主專屬控制面板 */
+        .host-panel { background: #2b1d1d; border: 1px solid #ff5722; padding: 15px; border-radius: 12px; width: 100%; max-width: 480px; margin-top: 15px; }
+        .host-title { font-size: 13px; color: #ff8a65; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
         .btn-host { background: #ff5722; }
         .btn-host:hover { background: #e64a19; }
-        .btn-reset { background: #dc3545; margin-top: 10px; }
+        .btn-reset { background: #dc3545; }
         .btn-reset:hover { background: #c82333; }
-        .status-hint { color: #a4a4a8; font-size: 14px; margin-top: 12px; text-align: center; }
+        
+        .badge { display: inline-block; background: #323238; padding: 4px 10px; border-radius: 20px; font-size: 14px; color: #06d6a0; margin-top: 10px; }
+        .player-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
+        .player-tag { background: #323238; padding: 6px 12px; border-radius: 16px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -55,227 +57,232 @@
     <!-- 1. 登入畫面 -->
     <div id="login-screen" class="screen active">
         <div class="card">
-            <h2 style="color:#ffd166;">🔥 老友默契與吐槽大會</h2>
-            <p style="color: #a4a4a8; margin-top: 8px; font-size: 14px;">上限 20 人｜準備好出賣朋友了嗎？</p>
-            <input type="text" id="username-input" placeholder="輸入你的綽號 (關主請輸入 boss)" maxlength="10">
-            <button id="join-btn" onclick="joinRoom()">進入房間</button>
+            <h2>🔥 老友默契與吐槽大會</h2>
+            <p>輸入你的江湖稱號（最多 20 人）</p>
+            <input type="text" id="username-input" placeholder="你的名字 (關主請輸入 boss)" maxlength="10" style="text-align: center;">
+            <button id="join-btn" onclick="joinRoom()">進入大廳</button>
         </div>
     </div>
 
-    <!-- 2. 遊戲大廳 -->
+    <!-- 2. 大廳等待畫面 -->
     <div id="lobby-screen" class="screen">
         <div class="card">
-            <h3 style="color:#00b0ff;">🛋️ 休息大廳 Waiting...</h3>
-            <p style="margin: 18px 0; font-size: 18px;">目前在線：<span id="lobby-count" style="font-weight:bold; color:#ffd166;">0</span> / 20 人</p>
-            <div id="lobby-player-list" style="color:#a4a4a8; font-size:14px; line-height:1.6; margin-bottom: 10px;"></div>
-            <p class="status-hint" id="lobby-guest-msg">等待關主發起第一題，支援中途加入...</p>
+            <h2>🎮 準備大廳</h2>
+            <p>目前在線人數：<strong id="lobby-count" style="color:#ffd166; font-size: 22px;">0</strong> / 20 人</p>
+            <div class="player-tags" id="lobby-player-list"></div>
+            <p style="margin-top: 20px; font-size: 14px; color: #8e8e93;" id="lobby-hint">等待關主開啟第一回合...</p>
         </div>
 
-        <div id="host-lobby-panel" class="host-panel" style="display:none;">
+        <!-- 關主控場 -->
+        <div class="host-panel" id="host-lobby-panel" style="display:none;">
             <div class="host-title">👑 關主控制台</div>
-            <button class="btn-host" onclick="hostStartNewRound(0)">開始第 1 題</button>
-            <button class="btn-reset" onclick="hostResetGame()">重置整房並踢出所有玩家</button>
+            <button class="btn-host" onclick="hostStartNewRound(0)">開始第 1 題（自動隨機抽人名）</button>
+            <button class="btn-reset" onclick="hostResetGame()">強制重置房間並踢出所有玩家</button>
         </div>
     </div>
 
-    <!-- 3. 填寫答案畫面 -->
+    <!-- 3. 填寫吐槽答案畫面 -->
     <div id="writing-screen" class="screen">
-        <div class="prompt-box">
-            <span class="prompt-tag" id="write-round-tag">第 1 題 / 共 12 題</span>
-            <div class="prompt-text" id="write-prompt-text">題目載入中...</div>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; color:#8e8e93; font-size:14px;">
+                <span>第 <strong id="write-round-num" style="color:#fff;">1</strong> 題</span>
+                <span>我的積分: <strong id="my-score-write" style="color:#ffd166;">0</strong></span>
+            </div>
+            
+            <div class="prompt-box" id="write-prompt-text">載入題目中...</div>
+            
+            <textarea id="answer-input" placeholder="寫下你覺得最神、最爆笑、或最符合他本人的答案..." maxlength="60"></textarea>
+            <button id="submit-ans-btn" style="background:#06d6a0;" onclick="submitAnswer()">送出神回覆！</button>
+            
+            <div class="badge">已交卷人數：<span id="ans-progress">0 / 0</span></div>
         </div>
 
-        <!-- 一般玩家填答區 -->
-        <div id="player-write-box" class="card">
-            <p style="color:#a4a4a8; font-size:14px; text-align:left;">請寫下你覺得最貼切、最好笑的吐槽：</p>
-            <textarea id="answer-input" placeholder="輸入你的神回覆... (最多60字)" maxlength="60"></textarea>
-            <button id="submit-ans-btn" onclick="submitAnswer()">送出答案</button>
-        </div>
-
-        <!-- 主角本人等待區 -->
-        <div id="target-wait-box" class="card" style="display:none;">
-            <h3 style="color:#ff5722; margin-bottom:10px;">🎯 本題主角就是你！</h3>
-            <p style="color:#d1d1d6; line-height:1.5;">大家正在瘋狂吐槽你，請先深呼吸，等一下由你來評判誰寫得最中肯！</p>
-        </div>
-
-        <p class="status-hint" id="write-progress-text">目前已有 0 人完成填寫</p>
-
-        <div id="host-write-panel" class="host-panel" style="display:none;">
+        <!-- 關主控場 -->
+        <div class="host-panel" id="host-write-panel" style="display:none;">
             <div class="host-title">👑 關主控制台</div>
-            <button class="btn-host" onclick="hostMoveToVoting()">停止填答，進入匿名投票</button>
+            <button class="btn-host" onclick="hostMoveToVoting()">截止作答 ➔ 進入全體投票環節</button>
+            <button class="btn-reset" onclick="hostResetGame()">重置整輪遊戲</button>
         </div>
     </div>
 
-    <!-- 4. 匿名投票畫面 -->
+    <!-- 4. 匿名投票環節畫面 -->
     <div id="voting-screen" class="screen">
-        <div class="prompt-box">
-            <span class="prompt-tag">🗳️ 匿名投票時間（不能投給自己）</span>
-            <div class="prompt-text" id="vote-prompt-text">題目載入中...</div>
+        <div class="card" style="max-width: 550px;">
+            <h3 style="color:#06d6a0; margin-bottom: 5px;">🗳️ 選出最神回覆！</h3>
+            <p style="font-size: 13px; margin-bottom: 10px;">（不能投給自己，每人一票）</p>
+            
+            <div class="prompt-box" id="vote-prompt-text" style="font-size: 16px; padding: 12px;"></div>
+            
+            <div id="vote-options-container"></div>
+            
+            <div class="badge">已投票人數：<span id="vote-progress">0 / 0</span></div>
         </div>
 
-        <div id="vote-list-container" style="width:100%; max-width:500px;"></div>
-        <p class="status-hint" id="vote-progress-text">目前已有 0 人完成投票</p>
-
-        <div id="host-vote-panel" class="host-panel" style="display:none;">
+        <!-- 關主控場 -->
+        <div class="host-panel" id="host-vote-panel" style="display:none; max-width: 550px;">
             <div class="host-title">👑 關主控制台</div>
-            <button class="btn-host" onclick="hostMoveToReveal()">結束投票，揭曉作者與積分</button>
+            <button class="btn-host" onclick="hostRevealAndRank()">截止投票 ➔ 揭曉作者與本輪排行</button>
+            <button class="btn-reset" onclick="hostResetGame()">重置整輪遊戲</button>
         </div>
     </div>
 
-    <!-- 5. 揭曉與排行榜畫面 -->
-    <div id="reveal-screen" class="screen">
-        <div class="prompt-box">
-            <span class="prompt-tag">🎉 本輪吐槽大公開</span>
-            <div class="prompt-text" id="reveal-prompt-text">題目載入中...</div>
+    <!-- 5. 揭曉作者與積分排行榜 -->
+    <div id="ranking-screen" class="screen">
+        <div class="card" style="max-width: 550px;">
+            <h2 id="rank-header-title">🏆 本輪揭曉與總積分榜</h2>
+            <p style="font-size: 14px; margin-bottom: 10px;">每獲得 1 票可得 <strong>1000 分</strong>！</p>
+            
+            <!-- 本輪答案作者揭曉區 -->
+            <div id="round-results-container" style="text-align: left; margin-bottom: 20px;"></div>
+            
+            <h3 style="color:#ffd166; text-align:left; font-size:16px; margin-bottom:8px;">📊 目前總積分排行</h3>
+            <div class="rank-list" id="leaderboard-container" style="margin: 0; max-height: 30vh;"></div>
         </div>
 
-        <div style="width:100%; max-width:500px;" id="reveal-answers-container"></div>
-
-        <div class="card" style="margin-top:15px;">
-            <h3 style="color:#ffd166; margin-bottom:10px;">🏆 目前總積分排行</h3>
-            <div id="leaderboard-container"></div>
-        </div>
-
-        <div id="host-reveal-panel" class="host-panel" style="display:none;">
+        <!-- 關主控場 -->
+        <div class="host-panel" id="host-rank-panel" style="display:none; max-width: 550px;">
             <div class="host-title">👑 關主控制台</div>
-            <button id="host-next-btn" class="btn-host" onclick="hostNextRound()">進入下一題</button>
-            <button class="btn-reset" onclick="hostResetGame()">結束並重置整房 (踢出所有人)</button>
+            <button id="next-round-btn" class="btn-host" onclick="hostNextRound()">進入下一題 ➔</button>
+            <button class="btn-reset" onclick="hostResetGame()">結束並重新開始整輪遊戲</button>
         </div>
-        <p class="status-hint" id="reveal-guest-msg">等待關主切換下一題...</p>
     </div>
 
+    <!-- 引入 Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
         // ==========================================
-        // 🛠️ CONFIG 區塊：請貼入你的 Firebase 設定
+        // 🛠️ CONFIG 區塊：請貼上你的 Firebase 設定
         // ==========================================
 	const firebaseConfig = {
-  	apiKey: "AIzaSyCLVPqDnLhjF_pj0sISOR73YFciNyeAd4I",
-  	authDomain: "my-map-game-fd694.firebaseapp.com",
-  	databaseURL: "https://my-map-game-fd694-default-rtdb.asia-southeast1.firebasedatabase.app",
-  	projectId: "my-map-game-fd694",
-  	storageBucket: "my-map-game-fd694.firebasestorage.app",
-  	messagingSenderId: "749340315291",
-  	appId: "1:749340315291:web:f6486949cbef4d5287403e",
-  	measurementId: "G-WFZ8HPJJ2H"
+	  apiKey: "AIzaSyCLVPqDnLhjF_pj0sISOR73YFciNyeAd4I",
+	  authDomain: "my-map-game-fd694.firebaseapp.com",
+	  databaseURL: "https://my-map-game-fd694-default-rtdb.asia-southeast1.firebasedatabase.app",
+	  projectId: "my-map-game-fd694",
+ 	 storageBucket: "my-map-game-fd694.firebasestorage.app",
+ 	 messagingSenderId: "749340315291",
+	  appId: "1:749340315291:web:f6486949cbef4d5287403e",
+	  measurementId: "G-WFZ8HPJJ2H"
 	};
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const HOST_NAME = "boss"; // 關主專用登入名稱
+        // 遊戲參數設定
+        const HOST_PASSWORD = "boss";
         const MAX_PLAYERS = 20;
 
         // ==========================================
-        // 📝 吐槽題庫 ({target} 會自動替換成玩家名字)
-        // 你可以自由增減或修改這些題目！
+        // 📝 默契與吐槽題庫（{NAME} 會自動替換成在場玩家名字）
+        // 你可以隨時在這裡自由增減或修改題目！
         // ==========================================
-        const questionTemplates = [
-            "如果 {target} 突然中了十億樂透，他第一件做的蠢事會是＿＿＿？",
-            "{target} 這輩子絕對不可能改掉的壞習慣是＿＿＿？",
-            "如果 {target} 被抓進警察局，最有可能的罪名是＿＿＿？",
-            "在荒島求生時，{target} 絕對是第一個被大家吃掉的，因為他只會＿＿＿。",
-            "{target} 喝醉之後最可怕的隱藏技能是＿＿＿？",
-            "如果 {target} 出了一本自傳，書名一定叫做《＿＿＿》。",
-            "{target} 每次出門前花最多時間在＿＿＿，但看起來還是沒差。",
-            "如果讓 {target} 當一天的台灣總統，他頒布的第一條法令會是＿＿＿？",
-            "{target} 的手機相簿裡，佔容量最多的絕對是＿＿＿的照片。",
-            "世界末日來臨時，{target} 唯一堅持要帶走的廢物是＿＿＿。",
-            "如果 {target} 去參加《單身即地獄》，他第一個被淘汰的原因是＿＿＿？",
-            "{target} 老年退休後，最有可能在公園裡做什麼奇怪的事？"
+        const promptTemplates = [
+            "如果 {NAME} 突然中了樂透頭獎，他第一件做的蠢事會是什麼？",
+            "在世界末日來臨時，{NAME} 背包裡唯一堅持要帶上的廢物是＿＿＿？",
+	    "{NAME} 這輩子絕對不可能改掉的壞習慣是＿＿＿？",
+            "如果讓 {NAME} 當選總統，他頒布的第一條法令會是＿＿＿？",
+	    "{NAME} 喝醉之後最可怕的隱藏技能是＿＿＿？",
+	    "十年後的某天，我們在新聞上看到 {NAME}，標題一定會寫：『驚！某市民竟然＿＿＿』？"
+	    "如果 {NAME} 被抓進警察局，最有可能的罪名是___?",
+	    "如果 {NAME} 轉行去當 YouTuber，他的頻道主打內容會是＿＿＿？",
+            "如果幫 {NAME} 的人生拍一部電影，片名應該叫做《＿＿＿》？",
+            "大家表面上不說，但其實心裡都知道 {NAME} 最大的弱點是＿＿＿？",
         ];
 
+        // 本地狀態變數
         let myName = "";
         let isHost = false;
-        let currentState = null;
-        let hasSubmittedAnswer = false;
+        let currentRound = 0;
+        let hasSubmitted = false;
         let myVotedTarget = null;
-        let usedTargets = []; // 記錄已經當過主角的人，盡量輪流抽
+        let usedTargetNames = []; // 關主用來記錄已經被當過主角的人，盡量不重複
 
+        // --- 1. 加入房間與防呆檢查 ---
         function joinRoom() {
             const input = document.getElementById('username-input').value.trim();
-            if (!input) return alert("請先輸入綽號！");
-            if (input.includes('/') || input.includes('.') || input.includes('#') || input.includes('$')) {
-                return alert("名字請勿包含特殊符號！");
-            }
+            if (!input) return alert("請輸入你的名字！");
+            
+            // 禁止特殊符號以免 Firebase 路徑報錯
+            if (/[.#$\[\]]/.test(input)) return alert("名字請勿包含 . # $ [ ] 等特殊符號！");
 
-            db.ref('roast_room/players').once('value', snapshot => {
+            myName = input;
+            document.getElementById('join-btn').disabled = true;
+
+            db.ref('roast_game/players').once('value', snapshot => {
                 const players = snapshot.val() || {};
-                const count = Object.keys(players).length;
+                const playerCount = Object.keys(players).length;
 
-                if (input.toLowerCase() !== HOST_NAME.toLowerCase() && count >= MAX_PLAYERS && !players[input]) {
-                    return alert("房間已滿 20 人囉！");
+                // 檢查 20 人上限（如果是已存在的玩家斷線重連則放行）
+                if (playerCount >= MAX_PLAYERS && !players[myName] && myName.toLowerCase() !== HOST_PASSWORD) {
+                    alert(`抱歉，房間已達 ${MAX_PLAYERS} 人上限！`);
+                    document.getElementById('join-btn').disabled = false;
+                    return;
                 }
 
-                myName = input;
-                if (myName.toLowerCase() === HOST_NAME.toLowerCase()) {
+                // 判定關主身分
+                if (myName.toLowerCase() === HOST_PASSWORD.toLowerCase()) {
                     isHost = true;
                     document.getElementById('host-lobby-panel').style.display = 'block';
                     document.getElementById('host-write-panel').style.display = 'block';
                     document.getElementById('host-vote-panel').style.display = 'block';
-                    document.getElementById('host-reveal-panel').style.display = 'block';
-                    document.getElementById('lobby-guest-msg').innerText = "👑 您已登入為關主，等大家到齊後即可按開始。";
-                    document.getElementById('reveal-guest-msg').style.display = 'none';
+                    document.getElementById('host-rank-panel').style.display = 'block';
+                    document.getElementById('lobby-hint').innerText = "👑 您已登入為關主，請確認人數到齊後按下開始。";
                 }
 
-                document.getElementById('join-btn').disabled = true;
-
-                // 註冊玩家（若中途斷線重連，保留原本分數）
+                // 寫入或保留玩家分數（支援中途加入或斷線重連）
                 if (!players[myName]) {
-                    db.ref(`roast_room/players/${myName}`).set({ score: 0 });
+                    db.ref(`roast_game/players/${myName}`).set({ score: 0 });
                 }
 
-                // 確保房間狀態存在
-                db.ref('roast_room/state').once('value', stateSnap => {
+                // 若房間尚未初始化狀態，建立大廳狀態
+                db.ref('roast_game/state').once('value', stateSnap => {
                     if (!stateSnap.exists()) {
-                        db.ref('roast_room/state').set({ status: "lobby", round: 0, targetPlayer: "", prompt: "" });
+                        db.ref('roast_game/state').set({ status: "lobby", round: 0, prompt: "" });
                     }
-                    startListening();
                 });
+
+                startListeners();
             });
         }
 
-        function startListening() {
-            // 1. 監聽玩家列表與被踢出機制
-            db.ref('roast_room/players').on('value', snapshot => {
+        // --- 2. 啟動即時同步監聽器 ---
+        function startListeners() {
+            // 監聽玩家清單與是否被踢出
+            db.ref('roast_game/players').on('value', snapshot => {
                 const players = snapshot.val() || {};
                 const names = Object.keys(players);
-                
-                document.getElementById('lobby-count').innerText = names.length;
-                document.getElementById('lobby-player-list').innerText = "已加入：" + names.join("、");
 
-                // 若非關主且名字從名單消失 ➔ 代表被關主重置踢出
+                // 被關主重置踢出判定
                 if (!isHost && !players[myName]) {
-                    db.ref('roast_room/players').off();
-                    db.ref('roast_room/state').off();
-                    db.ref('roast_room/answers').off();
-                    db.ref('roast_room/votes').off();
-
-                    alert("關主已重置遊戲房間，請重新輸入名字加入！");
+                    db.ref('roast_game/players').off();
+                    db.ref('roast_game/state').off();
+                    db.ref('roast_game/answers').off();
+                    db.ref('roast_game/votes').off();
+                    
+                    alert("遊戲已由關主重置，請重新輸入暱稱加入！");
                     document.getElementById('join-btn').disabled = false;
                     switchScreen('login-screen');
+                    return;
+                }
+
+                // 更新大廳人數與名單標籤
+                document.getElementById('lobby-count').innerText = names.length;
+                const listContainer = document.getElementById('lobby-player-list');
+                listContainer.innerHTML = names.map(n => 
+                    `<span class="player-tag">${n.toLowerCase() === HOST_PASSWORD ? '👑 ' + n : n}</span>`
+                ).join('');
+
+                // 更新自己的右上角分數
+                if (players[myName]) {
+                    document.getElementById('my-score-write').innerText = players[myName].score || 0;
                 }
             });
 
-            // 2. 監聽遊戲主狀態機
-            db.ref('roast_room/state').on('value', snapshot => {
+            // 監聽遊戲階段切換（支援中途加入直接切入當前畫面）
+            db.ref('roast_game/state').on('value', snapshot => {
                 const state = snapshot.val();
                 if (!state) return;
-
-                // 若切換到新回合，重置本地送出狀態
-                if (!currentState || currentState.round !== state.round || currentState.status !== state.status) {
-                    if (state.status === "writing") {
-                        hasSubmittedAnswer = false;
-                        document.getElementById('answer-input').value = "";
-                        document.getElementById('submit-ans-btn').disabled = false;
-                        document.getElementById('submit-ans-btn').innerText = "送出答案";
-                    }
-                    if (state.status === "voting") {
-                        myVotedTarget = null;
-                    }
-                }
-                currentState = state;
+                currentRound = state.round;
 
                 if (state.status === "lobby") {
                     switchScreen('lobby-screen');
@@ -283,280 +290,287 @@
                     renderWritingScreen(state);
                 } else if (state.status === "voting") {
                     renderVotingScreen(state);
-                } else if (state.status === "reveal") {
-                    renderRevealScreen(state);
+                } else if (state.status === "ranking") {
+                    renderRankingScreen(state);
                 }
             });
 
-            // 3. 監聽填答進度
-            db.ref('roast_room/answers').on('value', snapshot => {
-                const ans = snapshot.val() || {};
-                const count = Object.keys(ans).length;
-                document.getElementById('write-progress-text').innerText = `目前已有 ${count} 人完成填寫`;
-                
-                // 支援斷線重連時恢復「已送出」狀態
-                if (ans[myName] && !hasSubmittedAnswer) {
-                    hasSubmittedAnswer = true;
-                    document.getElementById('answer-input').value = ans[myName];
-                    document.getElementById('submit-ans-btn').disabled = true;
-                    document.getElementById('submit-ans-btn').innerText = "✅ 已送出，等待其他人...";
-                }
-            });
-
-            // 4. 監聽投票進度
-            db.ref('roast_room/votes').on('value', snapshot => {
-                const votes = snapshot.val() || {};
-                document.getElementById('vote-progress-text').innerText = `目前已有 ${Object.keys(votes).length} 人完成投票`;
-            });
-        }
-
-        function switchScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function formatPromptHTML(promptText, targetName) {
-            return promptText.replace(targetName, `<span class="highlight-name">${targetName}</span>`);
-        }
-
-        // --- 畫面渲染：填寫階段 ---
-        function renderWritingScreen(state) {
-            switchScreen('writing-screen');
-            document.getElementById('write-round-tag').innerText = `第 ${state.round + 1} 題 / 共 ${questionTemplates.length} 題`;
-            document.getElementById('write-prompt-text').innerHTML = formatPromptHTML(state.prompt, state.targetPlayer);
-
-            if (myName === state.targetPlayer) {
-                document.getElementById('player-write-box').style.display = 'none';
-                document.getElementById('target-wait-box').style.display = 'block';
-            } else {
-                document.getElementById('player-write-box').style.display = 'block';
-                document.getElementById('target-wait-box').style.display = 'none';
-            }
-        }
-
-        function submitAnswer() {
-            const text = document.getElementById('answer-input').value.trim();
-            if (!text) return alert("內容不能空白喔！");
-            
-            hasSubmittedAnswer = true;
-            document.getElementById('submit-ans-btn').disabled = true;
-            document.getElementById('submit-ans-btn').innerText = "✅ 已送出，等待其他人...";
-            
-            db.ref(`roast_room/answers/${myName}`).set(text);
-        }
-
-        // --- 畫面渲染：匿名投票階段 ---
-        function renderVotingScreen(state) {
-            switchScreen('voting-screen');
-            document.getElementById('vote-prompt-text').innerHTML = formatPromptHTML(state.prompt, state.targetPlayer);
-
-            db.ref('roast_room/answers').once('value', snapshot => {
+            // 監聽作答進度
+            db.ref('roast_game/answers').on('value', snapshot => {
                 const answers = snapshot.val() || {};
-                const authors = Object.keys(answers);
-                const container = document.getElementById('vote-list-container');
-                container.innerHTML = "";
+                db.ref('roast_game/players').once('value', pSnap => {
+                    const totalPlayers = Object.keys(pSnap.val() || {}).length;
+                    document.getElementById('ans-progress').innerText = `${Object.keys(answers).length} / ${totalPlayers}`;
+                });
+            });
 
-                if (authors.length === 0) {
-                    container.innerHTML = `<div class="card"><p>這回合竟然沒有人寫答案！請關主直接跳過。</p></div>`;
-                    return;
-                }
-
-                // 簡單打亂顯示順序（依據字元長度與名稱雜湊，讓所有人看到的匿名順序一致但看不出是誰）
-                authors.sort((a, b) => (a.length + answers[a].length) - (b.length + answers[b].length));
-
-                authors.forEach(author => {
-                    const isMine = (author === myName);
-                    const btn = document.createElement('div');
-                    btn.className = 'vote-option' + (isMine ? ' disabled' : '') + (myVotedTarget === author ? ' selected' : '');
-                    btn.innerText = answers[author] + (isMine ? " (這是你寫的)" : "");
-                    
-                    if (!isMine) {
-                        btn.onclick = () => castVote(author);
-                    }
-                    container.appendChild(btn);
+            // 監聽投票進度
+            db.ref('roast_game/votes').on('value', snapshot => {
+                const votes = snapshot.val() || {};
+                db.ref('roast_game/players').once('value', pSnap => {
+                    const totalPlayers = Object.keys(pSnap.val() || {}).length;
+                    document.getElementById('vote-progress').innerText = `${Object.keys(votes).length} / ${totalPlayers}`;
                 });
             });
         }
 
-        function castVote(authorName) {
-            myVotedTarget = authorName;
-            db.ref(`roast_room/votes/${myName}`).set(authorName);
-            // 重新渲染高亮選取框
-            renderVotingScreen(currentState);
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
-        // --- 畫面渲染：揭曉與積分排行 ---
-        function renderRevealScreen(state) {
-            switchScreen('reveal-screen');
-            document.getElementById('reveal-prompt-text').innerHTML = formatPromptHTML(state.prompt, state.targetPlayer);
+        // --- 3. 階段一：填寫吐槽答案 ---
+        function renderWritingScreen(state) {
+            switchScreen('writing-screen');
+            document.getElementById('write-round-num').innerText = `${state.round + 1} / ${promptTemplates.length}`;
+            document.getElementById('write-prompt-text').innerHTML = state.promptHTML;
+
+            // 檢查自己這回合是否已經交過卷（防止重整重複交卷）
+            db.ref(`roast_game/answers/${myName}`).once('value', snapshot => {
+                if (snapshot.exists()) {
+                    hasSubmitted = true;
+                    document.getElementById('answer-input').value = snapshot.val().text;
+                    document.getElementById('answer-input').disabled = true;
+                    document.getElementById('submit-ans-btn').disabled = true;
+                    document.getElementById('submit-ans-btn').innerText = "已送出！等待其他人寫完...";
+                } else {
+                    hasSubmitted = false;
+                    document.getElementById('answer-input').value = "";
+                    document.getElementById('answer-input').disabled = false;
+                    document.getElementById('submit-ans-btn').disabled = false;
+                    document.getElementById('submit-ans-btn').innerText = "送出神回覆！";
+                }
+            });
+        }
+
+        function submitAnswer() {
+            const text = document.getElementById('answer-input').value.trim();
+            if (!text) return alert("不要交白卷啦！隨便寫個梗吧！");
+
+            hasSubmitted = true;
+            document.getElementById('answer-input').disabled = true;
+            document.getElementById('submit-ans-btn').disabled = true;
+            document.getElementById('submit-ans-btn').innerText = "已送出！等待其他人寫完...";
+
+            db.ref(`roast_game/answers/${myName}`).set({
+                author: myName,
+                text: text
+            });
+        }
+
+        // --- 4. 階段二：匿名投票 ---
+        function renderVotingScreen(state) {
+            switchScreen('voting-screen');
+            document.getElementById('vote-prompt-text').innerHTML = state.promptHTML;
 
             Promise.all([
-                db.ref('roast_room/answers').once('value'),
-                db.ref('roast_room/votes').once('value'),
-                db.ref('roast_room/players').once('value')
+                db.ref('roast_game/answers').once('value'),
+                db.ref(`roast_game/votes/${myName}`).once('value')
+            ]).then(([ansSnap, myVoteSnap]) => {
+                const answers = ansSnap.val() || {};
+                myVotedTarget = myVoteSnap.val();
+                
+                const container = document.getElementById('vote-options-container');
+                container.innerHTML = "";
+
+                const authors = Object.keys(answers);
+                if (authors.length === 0) {
+                    container.innerHTML = "<p>這回合居然沒有人交卷！請關主直接進入下一題。</p>";
+                    return;
+                }
+
+                // 將答案隨機打亂順序，避免總是照進房順序排
+                authors.sort(() => Math.random() - 0.5);
+
+                authors.forEach(author => {
+                    const isMine = (author === myName);
+                    const isSelected = (myVotedTarget === author);
+                    
+                    const card = document.createElement('div');
+                    card.className = `vote-card ${isMine ? 'my-own' : ''} ${isSelected ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="vote-text">「${escapeHTML(answers[author].text)}」</div>
+                        ${isMine ? '<div style="font-size:12px; color:#8e8e93; margin-top:5px;">（這是你自己的答案，不能投）</div>' : ''}
+                    `;
+
+                    if (!isMine) {
+                        card.onclick = () => castVote(author);
+                    }
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function castVote(targetAuthor) {
+            myVotedTarget = targetAuthor;
+            db.ref(`roast_game/votes/${myName}`).set(targetAuthor);
+            
+            // 即時更新 UI 選取框
+            document.querySelectorAll('.vote-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        // --- 5. 階段三：揭曉作者與總積分榜 ---
+        function renderRankingScreen(state) {
+            switchScreen('ranking-screen');
+            
+            if (state.round + 1 >= promptTemplates.length) {
+                document.getElementById('rank-header-title').innerText = "🎉 最終大結局總積分榜 🎉";
+                if (isHost) document.getElementById('next-round-btn').style.display = 'none';
+            } else {
+                document.getElementById('rank-header-title').innerText = `第 ${state.round + 1} 題 揭曉與排行`;
+                if (isHost) document.getElementById('next-round-btn').style.display = 'block';
+            }
+
+            Promise.all([
+                db.ref('roast_game/answers').once('value'),
+                db.ref('roast_game/votes').once('value'),
+                db.ref('roast_game/players').once('value')
             ]).then(([ansSnap, voteSnap, playerSnap]) => {
                 const answers = ansSnap.val() || {};
                 const votes = voteSnap.val() || {};
                 const players = playerSnap.val() || {};
 
-                // 統計每個人獲得的票數
+                // 統計本輪每個人獲得幾票
                 const voteCounts = {};
-                Object.keys(answers).forEach(author => voteCounts[author] = 0);
-                Object.values(votes).forEach(votedAuthor => {
-                    if (voteCounts[votedAuthor] !== undefined) {
-                        voteCounts[votedAuthor]++;
-                    }
+                Object.values(votes).forEach(target => {
+                    voteCounts[target] = (voteCounts[target] || 0) + 1;
                 });
 
-                // 依得票數排序顯示本輪答案
-                const sortedAuthors = Object.keys(answers).sort((a, b) => voteCounts[b] - voteCounts[a]);
-                const ansContainer = document.getElementById('reveal-answers-container');
-                ansContainer.innerHTML = "";
-
+                // 渲染本輪答案與作者揭曉
+                const resContainer = document.getElementById('round-results-container');
+                resContainer.innerHTML = "";
+                
+                const sortedAuthors = Object.keys(answers).sort((a, b) => (voteCounts[b] || 0) - (voteCounts[a] || 0));
                 sortedAuthors.forEach(author => {
-                    const count = voteCounts[author];
-                    ansContainer.innerHTML += `
-                        <div class="reveal-item">
-                            <div class="reveal-header">
-                                <span class="reveal-author">✍️ ${author}</span>
-                                <span class="reveal-votes">獲得 ${count} 票 (+${count * 100}分)</span>
-                            </div>
-                            <div class="reveal-ans">${answers[author]}</div>
+                    const count = voteCounts[author] || 0;
+                    resContainer.innerHTML += `
+                        <div class="vote-card" style="cursor:default; margin: 8px 0; padding: 12px;">
+                            <div class="vote-text" style="font-size:16px;">「${escapeHTML(answers[author].text)}」</div>
+                            <div class="vote-author">✍️ 作者：${author} ｜ 獲得 ${count} 票 (+${count * 1000}分)</div>
                         </div>
                     `;
                 });
 
                 // 渲染總積分排行榜
+                const lbContainer = document.getElementById('leaderboard-container');
+                lbContainer.innerHTML = "";
                 const sortedPlayers = Object.keys(players)
                     .map(name => ({ name, score: players[name].score || 0 }))
                     .sort((a, b) => b.score - a.score);
 
-                const rankContainer = document.getElementById('leaderboard-container');
-                rankContainer.innerHTML = "";
                 sortedPlayers.forEach((p, idx) => {
-                    rankContainer.innerHTML += `
+                    lbContainer.innerHTML += `
                         <div class="rank-item">
                             <span>#${idx + 1} ${p.name}</span>
                             <span>${p.score} 分</span>
                         </div>
                     `;
                 });
-
-                // 控制按鈕文字
-                if (isHost) {
-                    const nextBtn = document.getElementById('host-next-btn');
-                    if (state.round + 1 >= questionTemplates.length) {
-                        nextBtn.innerText = "已達最後一題 (請按下方重置重玩)";
-                        nextBtn.disabled = true;
-                    } else {
-                        nextBtn.innerText = `進入第 ${state.round + 2} 題`;
-                        nextBtn.disabled = false;
-                    }
-                }
             });
         }
 
         // ==========================================
-        // 👑 關主控場邏輯
+        // 👑 關主控場核心指令
         // ==========================================
         function hostStartNewRound(roundIdx) {
             if (!isHost) return;
 
-            db.ref('roast_room/players').once('value', snapshot => {
-                const players = snapshot.val() || {};
-                const allNames = Object.keys(players);
+            // 清空上一輪的答案與投票紀錄
+            Promise.all([
+                db.ref('roast_game/answers').remove(),
+                db.ref('roast_game/votes').remove(),
+                db.ref('roast_game/players').once('value')
+            ]).then(([_, __, pSnap]) => {
+                const players = Object.keys(pSnap.val() || {});
                 
-                if (allNames.length < 2) {
-                    return alert("至少需要 2 位玩家在房間內才能抽主角開始遊戲喔！");
-                }
-
-                // 過濾出還沒當過主角的玩家，若大家都當過一輪就清空重抽
-                let candidates = allNames.filter(n => !usedTargets.includes(n));
+                // 過濾掉已經當過主角的人（如果全輪過一輪就重置名單）
+                let candidates = players.filter(n => !usedTargetNames.includes(n));
                 if (candidates.length === 0) {
-                    usedTargets = [];
-                    candidates = allNames;
+                    usedTargetNames = [];
+                    candidates = players;
                 }
 
-                // 隨機抽出一位主角
-                const chosenTarget = candidates[Math.floor(Math.random() * candidates.length)];
-                usedTargets.push(chosenTarget);
+                // 隨機抽出一名玩家作為本題主角
+                const chosenName = candidates[Math.floor(Math.random() * candidates.length)] || "某位神秘人";
+                usedTargetNames.push(chosenName);
 
-                const rawTemplate = questionTemplates[roundIdx];
-                const finalPrompt = rawTemplate.replace("{target}", chosenTarget);
+                // 將題目模板中的 {NAME} 替換成該玩家名字
+                const rawTemplate = promptTemplates[roundIdx];
+                const promptHTML = rawTemplate.replace(/{NAME}/g, `<span class="highlight-name">${escapeHTML(chosenName)}</span>`);
 
-                // 清空上一輪的答案與投票，並切換狀態
-                Promise.all([
-                    db.ref('roast_room/answers').remove(),
-                    db.ref('roast_room/votes').remove()
-                ]).then(() => {
-                    db.ref('roast_room/state').set({
-                        status: "writing",
-                        round: roundIdx,
-                        targetPlayer: chosenTarget,
-                        prompt: finalPrompt
-                    });
+                db.ref('roast_game/state').set({
+                    status: "writing",
+                    round: roundIdx,
+                    promptHTML: promptHTML
                 });
             });
         }
 
         function hostMoveToVoting() {
             if (!isHost) return;
-            db.ref('roast_room/state').update({ status: "voting" });
+            db.ref('roast_game/state').update({ status: "voting" });
         }
 
-        function hostMoveToReveal() {
+        function hostRevealAndRank() {
             if (!isHost) return;
 
-            // 結算本輪票數並加進玩家總分（由關主端統一結算，避免多人同時寫入衝突）
+            // 結算分數並累加進 players 總分
             Promise.all([
-                db.ref('roast_room/answers').once('value'),
-                db.ref('roast_room/votes').once('value'),
-                db.ref('roast_room/players').once('value')
-            ]).then(([ansSnap, voteSnap, playerSnap]) => {
-                const answers = ansSnap.val() || {};
+                db.ref('roast_game/votes').once('value'),
+                db.ref('roast_game/players').once('value')
+            ]).then(([voteSnap, playerSnap]) => {
                 const votes = voteSnap.val() || {};
                 const players = playerSnap.val() || {};
 
                 const voteCounts = {};
-                Object.values(votes).forEach(votedAuthor => {
-                    voteCounts[votedAuthor] = (voteCounts[votedAuthor] || 0) + 1;
+                Object.values(votes).forEach(target => {
+                    voteCounts[target] = (voteCounts[target] || 0) + 1;
                 });
 
                 const updates = {};
-                Object.keys(answers).forEach(author => {
-                    const earned = (voteCounts[author] || 0) * 100;
-                    const currentScore = (players[author] && players[author].score) ? players[author].score : 0;
-                    updates[`roast_room/players/${author}/score`] = currentScore + earned;
+                Object.keys(voteCounts).forEach(author => {
+                    if (players[author]) {
+                        const oldScore = players[author].score || 0;
+                        updates[`roast_game/players/${author}/score`] = oldScore + (voteCounts[author] * 1000);
+                    }
                 });
 
                 db.ref().update(updates).then(() => {
-                    db.ref('roast_room/state').update({ status: "reveal" });
+                    db.ref('roast_game/state').update({ status: "ranking" });
                 });
             });
         }
 
         function hostNextRound() {
             if (!isHost) return;
-            const nextIdx = currentState.round + 1;
-            if (nextIdx < questionTemplates.length) {
+            const nextIdx = currentRound + 1;
+            if (nextIdx < promptTemplates.length) {
                 hostStartNewRound(nextIdx);
             }
         }
 
         function hostResetGame() {
             if (!isHost) return;
-            if (confirm("確定要清空所有分數，並將除你以外的玩家踢回登入畫面嗎？")) {
-                usedTargets = [];
+            if (confirm("確定要結束並重置整輪遊戲嗎？除了你以外的所有玩家都會被踢回登入畫面！")) {
+                usedTargetNames = [];
                 Promise.all([
-                    db.ref('roast_room/answers').remove(),
-                    db.ref('roast_room/votes').remove(),
-                    db.ref('roast_room/state').set({ status: "lobby", round: 0, targetPlayer: "", prompt: "" })
+                    db.ref('roast_game/answers').remove(),
+                    db.ref('roast_game/votes').remove(),
+                    db.ref('roast_game/state').set({ status: "lobby", round: 0, promptHTML: "" })
                 ]).then(() => {
-                    db.ref('roast_room/players').remove().then(() => {
-                        db.ref(`roast_room/players/${myName}`).set({ score: 0 });
+                    db.ref('roast_game/players').remove().then(() => {
+                        db.ref(`roast_game/players/${myName}`).set({ score: 0 });
                     });
                 });
             }
+        }
+
+        // 防止玩家輸入 HTML 標籤破壞版面
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
         }
     </script>
 </body>
